@@ -10,6 +10,8 @@ import time as tim
 
 class MemN2N(object):
     def __init__(self, config, sess, pre_trained_context_wt, pre_trained_target_wt):
+
+        # Khởi tạo tất cả các tham số toàn cục với file config ban đầu
         self.nwords = config.nwords
         self.init_hid = config.init_hid
         self.init_std = config.init_std
@@ -46,11 +48,16 @@ class MemN2N(object):
         self.log_perp = []
 
     def build_memory(self):
+
+        # step 0
         self.global_step = tf.Variable(0, name="global_step")
 
+        # Khởi tạo matrix A với số chiều là [Số từ có trong từ điển, bộ nhớ trạng thái = 300], các giá trị sẽ random trong khoảng [-0.01, 0.01)
         self.A = tf.Variable(tf.random_uniform([self.nwords, self.edim], minval=-0.01, maxval=0.01))
         self.ASP = tf.Variable(
             tf.random_uniform([self.pre_trained_target_wt.shape[0], self.edim], minval=-0.01, maxval=0.01))
+
+        # Khởi tạo matrix C với số chiều là [Bộ nhớ trạng thái = 300, 300], các giá trị sẽ random trong khoảng [-0.01, 0.01)
         self.C = tf.Variable(tf.random_uniform([self.edim, self.edim], minval=-0.01, maxval=0.01))
         self.C_B = tf.Variable(tf.random_uniform([1, self.edim], minval=-0.01, maxval=0.01))
         self.BL_W = tf.Variable(tf.random_uniform([2 * self.edim, 1], minval=-0.01, maxval=0.01))

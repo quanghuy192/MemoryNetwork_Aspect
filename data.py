@@ -86,13 +86,24 @@ def get_dataset_resources(data_file_name, sent_word2idx, target_word2idx, word_s
 
 def get_embedding_matrix(embeddings, sent_word2idx, target_word2idx, edim):
     ''' returns the word and target embedding matrix '''
+
+    # Khởi tạo các matrix 0 có shape [độ dài các từ xuất hiện trong câu, bộ nhớ trạng thái = 300]
+    # và matrix 0 có shape [độ dài các từ target xuất hiện trong câu, bộ nhớ trạng thái = 300]
     word_embed_matrix = np.zeros([len(sent_word2idx), edim], dtype=float)
     target_embed_matrix = np.zeros([len(target_word2idx), edim], dtype=float)
 
+    # Với mỗi từ xuất hiện trong câu
+    # và từ đó cũng xuất hiện trong những từ điển
+    # ta thay đổi hàng tương ứng với từ đó trong câu
+    # bằng hàng của matrix trong bộ từ điển GloVe
     for word in sent_word2idx:
         if word in embeddings:
             word_embed_matrix[sent_word2idx[word]] = embeddings[word]
 
+    # Với mỗi từ xuất hiện trong tất cả các từ target
+    # và từ đó cũng xuất hiện trong những từ điển GloVe
+    # ta thay đổi hàng tương ứng với từ đó trong câu
+    # bằng giá trị trung bình với tất cả các hàng của matrix trong bộ từ điển GloVe
     for target in target_word2idx:
         for word in target:
             if word in embeddings:
