@@ -120,6 +120,7 @@ def get_dataset(data_file_name, sent_word2idx, target_word2idx, embeddings):
             sent_words = sentence.split()
             target_words = target.split()
             try:
+                # Lấy vị trí của từ target trong câu
                 target_location = sent_words.index("$t$")
             except:
                 print("sentence does not contain target element tag")
@@ -133,13 +134,17 @@ def get_dataset(data_file_name, sent_word2idx, target_word2idx, embeddings):
                 if word == "$t$":
                     continue
                 try:
+                    # vị trí của từ trong bộ từ điển vừa tạo
                     word_index = sent_word2idx[word]
                 except:
                     print("id not found for word in the sentence")
                     exit()
 
+                # lấy khoảng cách từ trong câu đối với từ target
                 location_info = abs(index - target_location)
 
+                # Lưu thông tin khoảng cách từ trong câu với từ target
+                # Đồng thời cũng lưu vị trí từ đó trong từ điển vừa tạo
                 if word in embeddings:
                     id_tokenised_sentence.append(word_index)
                     location_tokenised_sentence.append(location_info)
@@ -148,6 +153,7 @@ def get_dataset(data_file_name, sent_word2idx, target_word2idx, embeddings):
                 #   is_included_flag = 0
                 #   break
 
+            # Nếu từ target có trong từ điển thì đánh dấu cờ flag = 1
             is_included_flag = 0
             for word in target_words:
                 if word in embeddings:
@@ -155,17 +161,22 @@ def get_dataset(data_file_name, sent_word2idx, target_word2idx, embeddings):
                     break
 
             try:
+                # Lấy vị trí của từ target trong từ điển vừa tạo
                 target_index = target_word2idx[target]
             except:
                 print(target)
                 print("id not found for target")
                 exit()
 
+            # Nếu từ target đó không có trong từ điển thì bỏ qua
             if not is_included_flag:
-                print
-                sentence
+                print(sentence)
                 continue
 
+            # Lưu thông tin các đánh giá review dưới dạng index trong từ điển
+            # Lưu thông tin các khoảng các của từ trong câu đối với từ target
+            # Lưu thông tin các từ target dưới dạng index trong từ điển
+            # Lưu hướng đánh giá của người dừng đối với đánh giá, polarity in (0, 1, 2)
             sentence_list.append(id_tokenised_sentence)
             location_list.append(location_tokenised_sentence)
             target_list.append(target_index)
