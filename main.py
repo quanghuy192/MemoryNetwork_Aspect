@@ -10,6 +10,7 @@ pp = pprint.PrettyPrinter()
 
 flags = tf.app.flags
 
+# Định nghĩa những tham số khởi tạo
 flags.DEFINE_integer("edim", 300, "internal state dimension [300]")
 flags.DEFINE_integer("lindim", 300, "linear part of the state [75]")
 flags.DEFINE_integer("nhop", 3, "number of hops [7]")

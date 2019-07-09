@@ -11,7 +11,7 @@ import re
 
 stop = set(stopwords.words('english'))
 
-
+# Lấy thông tin những từ từ matrix GloVe
 def load_embedding_file(embed_file_name, word_set):
     ''' loads embedding file and returns a dictionary (word -> embedding) for the words existing in the word_set '''
 
@@ -24,6 +24,7 @@ def load_embedding_file(embed_file_name, word_set):
                 embedding = np.array(content[1:], dtype=float)
                 embeddings[word] = embedding
 
+    # Thông tin matrix bao gồm các cặp giá trị Key = word, Value = row của matrix chứa từ đó
     return embeddings
 
 
@@ -40,8 +41,11 @@ def get_dataset_resources(data_file_name, sent_word2idx, target_word2idx, word_s
     sentence_words = []
     target_words = []
 
+    # Mở file
     with open(data_file_name, 'r') as data_file:
         lines = data_file.read().split('\n')
+
+        # Chỉ đọc những dòng chứa những review
         for line_no in range(0, len(lines) - 1, 3):
             sentence = lines[line_no]
             target = lines[line_no + 1]
@@ -54,22 +58,29 @@ def get_dataset_resources(data_file_name, sent_word2idx, target_word2idx, word_s
             target_words.extend([target])
             words.extend(sentence.split() + target.split())
 
+        # Đếm số lần xuất hiện những từ trong câu,
+        # những từ target,
+        # và tất cả những từ trong câu bao gồm cả target
         sent_word_count.extend(Counter(sentence_words).most_common())
         target_count.extend(Counter(target_words).most_common())
         word_count.extend(Counter(words).most_common())
 
+        # Tạo bộ từ điển các từ trong câu với Key = word, Value = index++
         for word, _ in sent_word_count:
             if word not in sent_word2idx:
                 sent_word2idx[word] = len(sent_word2idx)
 
+        # Tạo bộ từ điển các từ target với Key = word, Value = index++
         for target, _ in target_count:
             if target not in target_word2idx:
                 target_word2idx[target] = len(target_word2idx)
 
+        # Tạo bộ từ điển các từ trong câu gao gồm cả từ target với Key = word, Value = index++
         for word, _ in word_count:
             if word not in word_set:
                 word_set[word] = 1
 
+    # Trả lại độ dài của câu dài nhất
     return max_sent_len
 
 
